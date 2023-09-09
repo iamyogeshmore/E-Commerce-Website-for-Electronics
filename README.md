@@ -9,7 +9,7 @@ Welcome to the E-commerce App for-Electronics!
 - [Features](#features)
 ## Introduction
 
-Your React E-commerce App is a web application that allows users to browse and shop for electronics products online. It provides a user-friendly interface for viewing and purchasing products.
+ React E-commerce App is a web application that allows users to browse and shop for electronics products online. It provides a user-friendly interface for viewing and purchasing products.
 
 ## Features
 

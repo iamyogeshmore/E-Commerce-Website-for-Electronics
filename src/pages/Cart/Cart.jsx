@@ -1,8 +1,8 @@
 import React from 'react'
-import BookCart from '../../components/BooksCart/BookCart'
+import BookCart from '../../components/Cart/Cart'
 
 export default function Cart() {
   return (
-    <div><BookCart/></div>
+    <div><Cart/></div>
   )
 }

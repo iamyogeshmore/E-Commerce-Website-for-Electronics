@@ -8,7 +8,6 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { Copyright } from "@mui/icons-material";
 
 const Login = () => {
   let navigate = useNavigate();
@@ -24,33 +23,33 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(username, password);
-  
+
     if (username === "" || password === "") {
       alert("Please provide login details.");
     } else {
       const body = JSON.stringify({ username, password });
       axios
-        .post('https://fakestoreapi.com/auth/login', body, {
+        .post("https://fakestoreapi.com/auth/login", body, {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         })
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
-            localStorage.setItem('AccessToken', response.data.token);
+            localStorage.setItem("AccessToken", response.data.token);
             toast.success("Login successful");
             setTimeout(() => {
               navigate("/");
             }, 800);
           } else {
-            toast.error('Invalid username or password');
+            toast.error("Invalid username or password");
           }
         })
         .catch((error) => {
-          toast.error('An error occurred');
-        });
-    }
+          toast.error("An error occurred");
+        });
+    }
   };
 
   return (
@@ -114,9 +113,9 @@ const Login = () => {
               }}
               variant="body2"
               sx={{
-                color: 'blue', // Change link color
-                cursor: 'pointer', // Show pointer on hover
-            }}
+                color: "blue",
+                cursor: "pointer",
+              }}
             >
               Forgot password?
             </Link>
@@ -128,9 +127,9 @@ const Login = () => {
               }}
               variant="body2"
               sx={{
-                color: 'blue', // Change link color
-                cursor: 'pointer', // Show pointer on hover
-            }}
+                color: "blue",
+                cursor: "pointer",
+              }}
             >
               {"Don't have an account? Sign Up"}
             </Link>

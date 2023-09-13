@@ -34,10 +34,9 @@
     margin-right: 80%;
     cursor: pointer;
     color: white;
-    transition: color 0.3s ease, transform 0.2s ease; /* Adding smooth transition */
+    transition: color 0.3s ease, transform 0.2s ease; 
   }
 
-  /* Login, Signup, Logout, and Order buttons styles */
   .loginbutton,
   .projectcart,
   .signUpbutton,

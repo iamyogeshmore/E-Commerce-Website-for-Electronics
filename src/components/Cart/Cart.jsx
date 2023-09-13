@@ -6,10 +6,10 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 import Header from '../Header/Header';
 import { toast, ToastContainer } from 'react-toastify';
-import './BookCart.css';
+import './Cart.css';
 import emptyCartImg from '../../assets/empty_cart.png';
 
-const BookCart = () => {
+const Cart = () => {
 
   let navigate = useNavigate();
 
@@ -21,6 +21,12 @@ const BookCart = () => {
     document.title = 'Cart';
     fetchCartData();
   }, [])
+
+  const today = new Date();
+const year = today.getFullYear();
+const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-indexed
+const day = today.getDate().toString().padStart(2, '0');
+const formattedDate = `${year}-${month}-${day}`;
 
   const fetchCartData = () => {
     axios.get('https://fakestoreapi.com/carts/user/1')
@@ -35,8 +41,16 @@ const BookCart = () => {
   }
 
 
-  const increaseBookQty= (CartID) => {
-    axios.put(`http://localhost:8083/CartPage/IncreaseBookQty?CartID=${CartID}&token=${localStorage.getItem("Token")}`)
+  const increaseBookQty= (CartID, qty) => {
+      const data = {
+          userId:1,
+          date:formattedDate,
+          products:[{productId:qty.productId,quantity:qty.quantity + 1}]
+      }
+      const body = JSON.stringify(data)
+    axios.put(`https://fakestoreapi.com/carts/${CartID}`, body ,{headers: {
+      'Content-Type': 'application/json',
+    }})
     .then((res) => {
       toast.success(res.data.message, {position: toast.POSITION.BOTTOM_CENTER} );
       console.log(res.data)
@@ -47,8 +61,16 @@ const BookCart = () => {
   });
   }
 
-  const decreaseBookQty= (CartID) => {
-    axios.put(`http://localhost:8083/CartPage/DecreaseBookQty?CartID=${CartID}&token=${localStorage.getItem("Token")}`)
+  const decreaseBookQty= (CartID, qty) => {
+      const data = {
+          userId:1,
+          date:formattedDate,
+          products:[{productId:qty.productId,quantity:qty.quantity -1}]
+      }
+      const body = JSON.stringify(data)
+    axios.put(`https://fakestoreapi.com/carts/${CartID}`, body ,{headers: {
+      'Content-Type': 'application/json',
+    }})
     .then((res) => {
       toast.success(res.data.message, {position: toast.POSITION.BOTTOM_CENTER});
       fetchCartData();
@@ -59,10 +81,10 @@ const BookCart = () => {
   }
 
   const removeBookFromCart=(id) => {
-    axios.delete(`http://localhost:8083/CartPage/Remove_Book_From_Cart?id=${id}&token=${localStorage.getItem("Token")}`)
+    axios.delete(`https://fakestoreapi.com/carts/${id}`)
     .then((res) => {
       console.log(res.data);
-      toast.success(res.data.message, {position: toast.POSITION.BOTTOM_CENTER});
+      toast.success("Product remove from cart", {position: toast.POSITION.BOTTOM_CENTER});
       fetchCartData();
   })
   .catch((err) => {
@@ -80,32 +102,32 @@ return (
         return (
           <div className='cartcontainerbody'>
             <Card key={cartProduct.id} className='card' sx={{ display: 'flex', marginBottom: '1%', marginTop: '1%', width: '75%', maxHeight: '90%' }}>
-              <div>
+              {/* <div>
                 <CardMedia
                   component="img"
                   height="100px"
                   image={cartProduct.products[0].image}
                   alt="Image not Available"
                   sx={{ objectFit: "contain", width: '150px' }} />
-              </div>
+              </div> */}
               <div className='cardContent'>
                 <CardContent class="cardcontent">
                   <label className='cardtitle'>
-                      {cartProduct.products[0].title}
+                      {cartProduct.date}
                   </label><br />
 
                   <label className='authorname'>
-                      {cartProduct.products[0].description}
+                      {cartProduct.products[0].productId}
                   </label><br />
 
                   <label className='cardtitle'>
-                      Rs. {cartProduct.products[0].price}
+                      Rs. {cartProduct.products[0].quantity}
                   </label><br />
 
                   <div className='countOfItems'>
-                    <button onClick={() => decreaseBookQty(cartProduct.id, )} disabled={cartProduct.products[0].image === 1}> - </button>
-                    <input  value={cartProduct.products[0].image} className="count" type="text" name="countOfBook" id="Name" required />
-                    <button onClick={() => increaseBookQty(cartProduct.id)}> + </button>
+                    <button onClick={() => decreaseBookQty(cartProduct.id, cartProduct.products[0])} disabled={cartProduct.products[0].image === 1}> - </button>
+                    <input  value={cartProduct.products[0].quantity} className="count" type="text" name="countOfBook" id="Name" required />
+                    <button onClick={() => increaseBookQty(cartProduct.id, cartProduct.products[0])}> + </button>
                   </div>
                 </CardContent>
               </div>
@@ -130,5 +152,4 @@ return (
     </div>
   )
 }
-
-export default BookCart
+export default Cart

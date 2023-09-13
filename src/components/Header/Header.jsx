@@ -5,21 +5,21 @@ import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { IconButton } from "@mui/material";
 import "./Header.css";
-import { toast } from "react-toastify";
 
 const Header = (props) => {
   let navigate = useNavigate();
 
   const logOutHandler = () => {
-    localStorage.clear()
-        setTimeout(() => { navigate("/"); }, 2000);
-    }
+    localStorage.clear();
+    setTimeout(() => {
+      navigate("/");
+    }, 2000);
+  };
 
   return (
     <div>
       <header>
         <div className="project">
-        
           <label
             className="projectname"
             onClick={() => {
@@ -57,8 +57,6 @@ const Header = (props) => {
             </button>
           )}
 
-        
-
           {localStorage.getItem("AccessToken") != null && (
             <IconButton
               onClick={() => {
@@ -67,7 +65,8 @@ const Header = (props) => {
               className="projectcart"
             >
               <text>Cart </text>
-              <ShoppingCartIcon style={{ fontSize: "15px" }} />{""}
+              <ShoppingCartIcon style={{ fontSize: "15px" }} />
+              {""}
             </IconButton>
           )}
         </div>

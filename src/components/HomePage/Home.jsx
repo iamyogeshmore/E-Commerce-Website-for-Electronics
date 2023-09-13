@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -6,7 +8,6 @@ import {
   CardMedia,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Header from "../Header/Header";
 import "./Home.css";
@@ -29,10 +30,8 @@ const Home = () => {
     fetechElectronicProducts();
     if (localStorage.getItem("AccessToken") === null) {
       setLogin(false);
-      console.log(localStorage.getItem("AccessToken"));
     } else {
       setLogin(true);
-      console.log(localStorage.getItem("AccessToken"));
     }
   }, []);
 
@@ -41,17 +40,15 @@ const Home = () => {
       .get("https://fakestoreapi.com/products/category/electronics")
       .then((response) => {
         setElectronics(response.data);
-        console.log(response.data);
       });
   };
 
   const today = new Date();
   const year = today.getFullYear();
-  const month = (today.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-indexed
+  const month = (today.getMonth() + 1).toString().padStart(2, "0");
   const day = today.getDate().toString().padStart(2, "0");
 
   const formattedDate = `${year}-${month}-${day}`;
-  console.log(formattedDate); // Output: "YYYY-MM-DD" for the current date
 
   const addToCart = (id) => {
     if (login) {
@@ -68,23 +65,21 @@ const Home = () => {
           },
         })
         .then((res) => {
-          if (res.status == 200) {
-            toast.success("Iteam Added Succefully ");
+          if (res.status === 200) {
+            toast.success("Item Added Successfully");
           } else {
             toast.error("Something went wrong");
           }
         })
         .catch((err) => {
-          toast.error(err.data.data);
-          console.log(err);
+          toast.error("Error adding item to the cart");
         });
     } else {
-      toast.error("Please Login to buy product.");
+      toast.error("Please login to buy a product.");
     }
   };
 
   const sorting = (e) => {
-    console.log(e.target.value);
     if (e.target.value === "Asc") {
       axios.get("https://fakestoreapi.com/products?sort=asc").then((res) => {
         setElectronics(res.data);
@@ -97,6 +92,7 @@ const Home = () => {
       });
     }
   };
+
   return (
     <div>
       <Header></Header>
@@ -123,7 +119,7 @@ const Home = () => {
             {electronics.length > 0
               ? electronics
                   .filter((electronics) => {
-                    if (search === " ") {
+                    if (search === "") {
                       return electronics;
                     } else if (
                       electronics.title.toLowerCase().includes(search) ||
@@ -135,54 +131,56 @@ const Home = () => {
                   .slice(pagination.start, pagination.end)
                   .map((electronics) => {
                     return (
-                      <Card
-                        key={electronics.id}
-                        className="card"
-                        sx={{ maxWidth: 200 }}
-                      >
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={electronics.image}
-                          alt="Image Not Available"
-                          sx={{ objectFit: "contain" }}
-                        ></CardMedia>
+                     
+                 
+                      <Card key={electronics.id} className="card" sx={{ maxWidth: 200 }}>
+                        <Link to={`/product/${electronics.id}`} className="product-link">
+                          {/* Wrap the CardMedia component in a Link */}
+                          <CardMedia
+                            component="img"
+                            height="140"
+                            image={electronics.image}
+                            alt="Image Not Available"
+                            sx={{ objectFit: "contain" }}
+                          />
+                        </Link>
 
-                        {electronics.rating.count == 0 && (
-                          <h1 className="content">Out of Stock</h1>
-                        )}
+                          {electronics.rating.count === 0 && (
+                            <h1 className="content">Out of Stock</h1>
+                          )}
 
-                        <CardContent class="cardcontent">
-                          <label className="cardtitle">
-                            {electronics.title}
-                          </label>
-                          <br />
+                          <CardContent class="cardcontent">
+                            <label className="cardtitle">
+                              {electronics.title}
+                            </label>
+                            <br />
 
-                          <label className="authorname">
-                            by {electronics.description}
-                          </label>
-                          <br />
+                            <label className="authorname">
+                              by {electronics.description}
+                            </label>
+                            <br />
 
-                          <label className="cardtitle">
-                            Rs. {electronics.price}
-                          </label>
-                        </CardContent>
+                            <label className="cardtitle">
+                              Rs. {electronics.price}
+                            </label>
+                          </CardContent>
 
-                        <CardActions>
-                          <Button
-                            startIcon={<ShoppingCartRounded />}
-                            disabled={electronics.rating.count === 0}
-                            onClick={() => addToCart(electronics.id)}
-                            size="small"
-                            variant="contained"
-                          >
-                            Add To Cart
-                          </Button>
-                          <Button variant="outlined" size="small">
-                            WishList
-                          </Button>
-                        </CardActions>
-                      </Card>
+                          <CardActions>
+                            <Button
+                              startIcon={<ShoppingCartRounded />}
+                              disabled={electronics.rating.count === 0}
+                              onClick={() => addToCart(electronics.id)}
+                              size="small"
+                              variant="contained"
+                            >
+                              Add To Cart
+                            </Button>
+                            <Button variant="outlined" size="small">
+                              WishList
+                            </Button>
+                          </CardActions>
+                        </Card>
+                    
                     );
                   })
               : "No Electronics products Available Here"}

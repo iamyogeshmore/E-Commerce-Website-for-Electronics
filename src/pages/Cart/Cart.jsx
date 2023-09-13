@@ -1,7 +1,7 @@
 import React from 'react'
-import BookCart from '../../components/Cart/Cart'
+import Cart from '../../components/Cart/Cart'
 
-export default function Cart() {
+export default function CartPage() {
   return (
     <div><Cart/></div>
   )

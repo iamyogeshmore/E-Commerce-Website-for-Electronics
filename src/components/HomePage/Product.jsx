@@ -78,56 +78,57 @@ const ProductDetails = () => {
 
   return (
     <div>
-      <Header />
-      {product ? (
-        <div className="product-details">
-          <div className="image-container">
-            <Card className="card" sx={{ maxWidth: 400 }}>
-              <CardMedia
-                component="img"
-                height="400"
-                image={product.image}
-                alt="Product Image"
-                sx={{ objectFit: "contain" }}
+    <Header />
+    {product ? (
+      <div className="product-details">
+        <div className="random-images-container">
+          <h3>Random Images</h3>
+          <div className="random-images">
+            {randomImages.map((imageUrl, index) => (
+              <img
+                key={index}
+                src={imageUrl}
+                alt={`Random Image ${index}`}
+                className="random-image"
               />
-            </Card>
+            ))}
           </div>
-          <div className="random-images-container">
-            <h3>Random Images</h3>
-            <div className="random-images">
-              {randomImages.map((imageUrl, index) => (
-                <img
-                  key={index}
-                  src={imageUrl}
-                  alt={`Random Image ${index}`}
-                  className="random-image"
-                />
-              ))}
+        </div>
+        <div className="image-container">
+          <Card className="card" sx={{ maxWidth: 400 }}>
+            <CardMedia
+              component="img"
+              height="400"
+              image={product.image}
+              alt="Product Image"
+              sx={{ objectFit: "contain" }}
+            />
+          </Card>
+        </div>
+        <CardContent>
+          <h2 className="product-title">{product.title}</h2>
+          <p className="product-description">{product.description}</p>
+          <p className="product-price">Price: Rs. {product.price}</p>
+          <div className="ram-options">
+            <p>Select RAM:</p>
+            <div>
+              <button
+                className={selectedRAM === "4GB" ? "selected" : ""}
+                onClick={() => handleRAMOptionChange("4GB", 0)}
+              >
+                4GB
+              </button>
+              <button
+                className={selectedRAM === "8GB" ? "selected" : ""}
+                onClick={() => handleRAMOptionChange("8GB", 50)}
+              >
+                8GB
+              </button>
             </div>
           </div>
-          <CardContent>
-            <h2 className="product-title">{product.title}</h2>
-            <p className="product-description">{product.description}</p>
-            <p className="product-price">Price: Rs. {product.price}</p>
-            <div className="ram-options">
-              <p>Select RAM:</p>
-              <div>
-                <button
-                  className={selectedRAM === "4GB" ? "selected" : ""}
-                  onClick={() => handleRAMOptionChange("4GB", 0)}
-                >
-                  4GB
-                </button>
-                <button
-                  className={selectedRAM === "8GB" ? "selected" : ""}
-                  onClick={() => handleRAMOptionChange("8GB", 50)}
-                >
-                  8GB (+Rs. 50)
-                </button>
-              </div>
-            </div>
-          </CardContent>
-          <CardActions>
+        </CardContent>
+        <CardActions>
+          <div className="action-buttons">
             <div className="product-count">
               <button
                 onClick={() => {
@@ -154,16 +155,18 @@ const ProductDetails = () => {
             >
               Add To Cart
             </Button>
-          </CardActions>
-          <div className="total-price">
-            <p>Total Price: Rs. {totalPrice}</p>
+            <div className="total-price">
+              <p>Total Price: Rs. {totalPrice}</p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <p>Loading product details...</p>
-      )}
-      <ToastContainer autoClose={2000} />
-    </div>
+        </CardActions>
+      </div>
+    ) : (
+      <p>Loading product details...</p>
+    )}
+    <ToastContainer autoClose={2000} />
+  </div>
+  
   );
 };
 

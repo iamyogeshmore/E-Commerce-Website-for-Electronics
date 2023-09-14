@@ -32,6 +32,8 @@
   }
   .random-images-container {
     margin-left: 20px;
+    width: 800px;
+    max-width: 800px;
   }
   
   .random-images-container h3 {
@@ -75,20 +77,39 @@
   }
   
   .ram-options button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
     padding: 5px 10px;
     margin-right: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
     cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
   }
   
   .ram-options button.selected {
-    background-color: #0056b3;
+    background-color: #007bff;
   }
   
+  .storage-options {
+    margin-top: 20px;
+  }
+  
+  .storage-options p {
+    margin-bottom: 5px;
+  }
+  
+  .storage-options button {
+    padding: 5px 10px;
+    margin-right: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    cursor: pointer;
+  }
+  
+  .storage-options button.selected {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+
   .product-count {
     display: flex;
     align-items: center;
@@ -124,10 +145,13 @@
   }
   
   .random-image {
-    width: 80px; /* Adjust the width as per your preference */
-    height: 80px; /* Adjust the height as per your preference */
+    width: 80px; 
+    height: 80px; 
     margin-right: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
   }
   
+  .hoverImage{
+    min-width: 980px;
+  }

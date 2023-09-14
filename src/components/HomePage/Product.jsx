@@ -19,8 +19,10 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [productCount, setProductCount] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [selectedRAM, setSelectedRAM] = useState("4GB"); // Default selected RAM option
+  const [selectedRAM, setSelectedRAM] = useState("4GB"); 
   const [ramPrice, setRamPrice] = useState(0);
+  const [displayedImage, setDisplayedImage] = useState(null); 
+
 
   useEffect(() => {
     document.title = "Product Details";
@@ -38,6 +40,7 @@ const ProductDetails = () => {
       .then((res) => res.json())
       .then((product) => {
         setProduct(product);
+        setDisplayedImage(product.image);
       })
       .catch((error) => {
         console.error("Error fetching product details:", error);
@@ -65,15 +68,18 @@ const ProductDetails = () => {
   const handleRAMOptionChange = (option, price) => {
     setSelectedRAM(option);
     setRamPrice(price);
-    setTotalPrice(product.price * productCount + price); // Update total price
+    setTotalPrice(product.price * productCount + price);
   };
 
   const randomImages = [
+    product.image, 
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ557o_lo4rZExfverdDtaPsHJOcrIBmBJjkxYp-wdNdgKlmXpoFMBGzOsdIUgkyl0tD9g&usqp=CAU",
     "https://images.unsplash.com/photo-1517404215738-15263e9f9178?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8dXJsfGVufDB8fDB8fHww&w=1000&q=80",
     "https://images.unsplash.com/photo-1579667410546-f7079afa0601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTA1OTIxNTB8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=420&q=60",
-    // Add more image URLs as needed
   ];
+  const handleImageClick = (imageUrl) => {
+    setDisplayedImage(imageUrl);
+  };
 
   return (
     <div>
@@ -88,7 +94,8 @@ const ProductDetails = () => {
                   key={index}
                   src={imageUrl}
                   alt={`Random Image ${index}`}
-                  className="random-image"
+                  className={`random-image ${imageUrl === displayedImage ? "selected" : ""}`}
+                  onClick={() => handleImageClick(imageUrl)}
                 />
               ))}
             </div>
@@ -98,12 +105,13 @@ const ProductDetails = () => {
               <CardMedia
                 component="img"
                 height="400"
-                image={product.image}
+                image={displayedImage}
                 alt="Product Image"
                 sx={{ objectFit: "contain" }}
               />
             </Card>
           </div>
+     
           <CardContent>
             <h2 className="product-title">{product.title}</h2>
             <p className="product-description">{product.description}</p>
@@ -145,7 +153,7 @@ const ProductDetails = () => {
                   onChange={(e) => {
                     const newCount = parseInt(e.target.value);
                     setProductCount(newCount);
-                    setTotalPrice(product.price * newCount + ramPrice); // Update total price
+                    setTotalPrice(product.price * newCount + ramPrice); 
                   }}
                 />
                 <button onClick={() => setProductCount(productCount + 1)}>+</button>

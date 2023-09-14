@@ -65,108 +65,110 @@ const ProductDetails = () => {
   const handleRAMOptionChange = (option, price) => {
     setSelectedRAM(option);
     setRamPrice(price);
+    setTotalPrice(product.price * productCount + price); // Update total price
   };
 
   const randomImages = [
-
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ557o_lo4rZExfverdDtaPsHJOcrIBmBJjkxYp-wdNdgKlmXpoFMBGzOsdIUgkyl0tD9g&usqp=CAU",
     "https://images.unsplash.com/photo-1517404215738-15263e9f9178?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8dXJsfGVufDB8fDB8fHww&w=1000&q=80",
     "https://images.unsplash.com/photo-1579667410546-f7079afa0601?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXRodW1ibmFpbHx8MTA1OTIxNTB8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=420&q=60",
     // Add more image URLs as needed
-
   ];
 
   return (
     <div>
-    <Header />
-    {product ? (
-      <div className="product-details">
-        <div className="random-images-container">
-          <h3>Random Images</h3>
-          <div className="random-images">
-            {randomImages.map((imageUrl, index) => (
-              <img
-                key={index}
-                src={imageUrl}
-                alt={`Random Image ${index}`}
-                className="random-image"
+      <Header />
+      {product ? (
+        <div className="product-details">
+          <div className="random-images-container">
+            <h3>Random Images</h3>
+            <div className="random-images">
+              {randomImages.map((imageUrl, index) => (
+                <img
+                  key={index}
+                  src={imageUrl}
+                  alt={`Random Image ${index}`}
+                  className="random-image"
+                />
+              ))}
+            </div>
+          </div>
+          <div className="image-container">
+            <Card className="card" sx={{ maxWidth: 400 }}>
+              <CardMedia
+                component="img"
+                height="400"
+                image={product.image}
+                alt="Product Image"
+                sx={{ objectFit: "contain" }}
               />
-            ))}
+            </Card>
           </div>
+          <CardContent>
+            <h2 className="product-title">{product.title}</h2>
+            <p className="product-description">{product.description}</p>
+            <p className="product-price">Price: Rs. {product.price}</p>
+            <div className="ram-options">
+              <p>Select RAM:</p>
+              <div>
+                <button
+                  className={selectedRAM === "4GB" ? "selected" : ""}
+                  onClick={() => handleRAMOptionChange("4GB", 0)}
+                >
+                  4GB
+                </button>
+                <button
+                  className={selectedRAM === "8GB" ? "selected" : ""}
+                  onClick={() => handleRAMOptionChange("8GB", 50)}
+                >
+                  8GB
+                </button>
+              </div>
+            </div>
+          </CardContent>
+          <CardActions>
+            <div className="action-buttons">
+              <div className="product-count">
+                <button
+                  onClick={() => {
+                    if (productCount > 1) {
+                      setProductCount(productCount - 1);
+                    }
+                  }}
+                  disabled={productCount <= 1}
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  value={productCount}
+                  onChange={(e) => {
+                    const newCount = parseInt(e.target.value);
+                    setProductCount(newCount);
+                    setTotalPrice(product.price * newCount + ramPrice); // Update total price
+                  }}
+                />
+                <button onClick={() => setProductCount(productCount + 1)}>+</button>
+              </div>
+              <Button
+                startIcon={<ShoppingCartRounded />}
+                onClick={() => addToCart(product.id, productCount)}
+                size="small"
+                variant="contained"
+              >
+                Add To Cart
+              </Button>
+              <div className="total-price">
+                <p>Total Price: Rs. {totalPrice}</p>
+              </div>
+            </div>
+          </CardActions>
         </div>
-        <div className="image-container">
-          <Card className="card" sx={{ maxWidth: 400 }}>
-            <CardMedia
-              component="img"
-              height="400"
-              image={product.image}
-              alt="Product Image"
-              sx={{ objectFit: "contain" }}
-            />
-          </Card>
-        </div>
-        <CardContent>
-          <h2 className="product-title">{product.title}</h2>
-          <p className="product-description">{product.description}</p>
-          <p className="product-price">Price: Rs. {product.price}</p>
-          <div className="ram-options">
-            <p>Select RAM:</p>
-            <div>
-              <button
-                className={selectedRAM === "4GB" ? "selected" : ""}
-                onClick={() => handleRAMOptionChange("4GB", 0)}
-              >
-                4GB
-              </button>
-              <button
-                className={selectedRAM === "8GB" ? "selected" : ""}
-                onClick={() => handleRAMOptionChange("8GB", 50)}
-              >
-                8GB
-              </button>
-            </div>
-          </div>
-        </CardContent>
-        <CardActions>
-          <div className="action-buttons">
-            <div className="product-count">
-              <button
-                onClick={() => {
-                  if (productCount > 1) {
-                    setProductCount(productCount - 1);
-                  }
-                }}
-                disabled={productCount <= 1}
-              >
-                -
-              </button>
-              <input
-                type="number"
-                value={productCount}
-                onChange={(e) => setProductCount(parseInt(e.target.value))}
-              />
-              <button onClick={() => setProductCount(productCount + 1)}>+</button>
-            </div>
-            <Button
-              startIcon={<ShoppingCartRounded />}
-              onClick={() => addToCart(product.id, productCount)}
-              size="small"
-              variant="contained"
-            >
-              Add To Cart
-            </Button>
-            <div className="total-price">
-              <p>Total Price: Rs. {totalPrice}</p>
-            </div>
-          </div>
-        </CardActions>
-      </div>
-    ) : (
-      <p>Loading product details...</p>
-    )}
-    <ToastContainer autoClose={2000} />
-  </div>
-  
+      ) : (
+        <p>Loading product details...</p>
+      )}
+      <ToastContainer autoClose={2000} />
+    </div>
   );
 };
 

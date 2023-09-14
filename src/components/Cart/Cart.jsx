@@ -39,13 +39,48 @@ const Cart = () => {
       });
   };
 
-  const increaseProductQty = (CartID, qty) => {
+  const increaseProductQty = (CartID, productId) => {
+    const updatedCartProducts = cartProducts.map((cart) => {
+      if (cart.id === CartID) {
+        const updatedProducts = cart.products.map((product) => {
+          if (product.productId === productId) {
+            return { ...product, quantity: product.quantity + 1 };
+          }
+          return product;
+        });
+        return { ...cart, products: updatedProducts };
+      }
+      return cart;
+    });
+
+    updateCartOnServer(CartID, updatedCartProducts);
+  };
+
+  const decreaseProductQty = (CartID, productId) => {
+    const updatedCartProducts = cartProducts.map((cart) => {
+      if (cart.id === CartID) {
+        const updatedProducts = cart.products.map((product) => {
+          if (product.productId === productId && product.quantity > 1) {
+            return { ...product, quantity: product.quantity - 1 };
+          }
+          return product;
+        });
+        return { ...cart, products: updatedProducts };
+      }
+      return cart;
+    });
+
+    updateCartOnServer(CartID, updatedCartProducts);
+  };
+
+  const updateCartOnServer = (CartID, updatedCartProducts) => {
     const data = {
       userId: 1,
       date: formattedDate(),
-      products: [{ productId: qty.productId, quantity: qty.quantity + 1 }],
+      products: updatedCartProducts.find((cart) => cart.id === CartID).products,
     };
     const body = JSON.stringify(data);
+
     axios
       .put(`https://fakestoreapi.com/carts/${CartID}`, body, {
         headers: {
@@ -54,48 +89,41 @@ const Cart = () => {
       })
       .then((res) => {
         toast.success(res.data.message, { position: toast.POSITION.BOTTOM_CENTER });
-        console.log(res.data);
-        fetchCartData();
+        setCartProducts(updatedCartProducts);
       })
       .catch((err) => {
         toast.error(err.response.data);
       });
   };
 
-  const decreaseProductQty = (CartID, qty) => {
-    if (qty.quantity > 1) {
-      const data = {
-        userId: 1,
-        date: formattedDate(),
-        products: [{ productId: qty.productId, quantity: qty.quantity - 1 }],
-      };
-      const body = JSON.stringify(data);
-      axios
-        .put(`https://fakestoreapi.com/carts/${CartID}`, body, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-        .then((res) => {
-          toast.success(res.data.message, { position: toast.POSITION.BOTTOM_CENTER });
-          fetchCartData();
-        })
-        .catch((err) => {
-          toast.error(err.response.data);
-        });
-    }
-  };
+  const removeProductFromCart = (CartID, productId) => {
+    const updatedCartProducts = cartProducts.map((cart) => {
+      if (cart.id === CartID) {
+        const updatedProducts = cart.products.filter((product) => product.productId !== productId);
+        return { ...cart, products: updatedProducts };
+      }
+      return cart;
+    });
 
-  const removeProductFromCart = (productId) => {
+    const data = {
+      userId: 1,
+      date: formattedDate(),
+      products: updatedCartProducts.find((cart) => cart.id === CartID).products,
+    };
+    const body = JSON.stringify(data);
+
     axios
-      .delete(`https://fakestoreapi.com/carts/${productId}`)
+      .put(`https://fakestoreapi.com/carts/${CartID}`, body, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       .then((res) => {
-        console.log(res.data);
         toast.success('Product removed from cart', { position: toast.POSITION.BOTTOM_CENTER });
-        fetchCartData();
+        setCartProducts(updatedCartProducts);
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response.data);
       });
   };
 
@@ -136,7 +164,7 @@ const Cart = () => {
 
                         <div className='countOfItems'>
                           <button
-                            onClick={() => decreaseProductQty(cart.id, cartProduct)}
+                            onClick={() => decreaseProductQty(cart.id, cartProduct.productId)}
                             disabled={cartProduct.quantity === 1}
                           >
                             -
@@ -149,14 +177,18 @@ const Cart = () => {
                             id='Name'
                             required
                           />
-                          <button onClick={() => increaseProductQty(cart.id, cartProduct)}>+</button>
+                          <button
+                            onClick={() => increaseProductQty(cart.id, cartProduct.productId)}
+                          >
+                            +
+                          </button>
                         </div>
                       </CardContent>
                     </div>
                     <div className='cardAction'>
                       <CardActions>
                         <Button
-                          onClick={() => removeProductFromCart(cartProduct.productId)} // Use productId here
+                          onClick={() => removeProductFromCart(cart.id, cartProduct.productId)}
                           variant='outlined'
                           startIcon={<DeleteIcon />}
                         >
@@ -172,7 +204,6 @@ const Cart = () => {
         ) : (
           <img src={emptyCartImg} className='emptyCartImg' alt='Empty Cart' />
         )}
-       
       </div>
       <ToastContainer autoClose={2000} />
     </div>

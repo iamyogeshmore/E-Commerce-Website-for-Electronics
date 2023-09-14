@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Button,
   Card,
@@ -13,6 +12,9 @@ import Header from "../Header/Header";
 import "./Home.css";
 import Pagination from "../pagination/Pagination";
 import { ShoppingCartRounded } from "@mui/icons-material";
+import Slider from 'react-slick';
+import { Link } from "react-router-dom";
+
 
 const Home = () => {
   const [electronics, setElectronics] = useState([]);
@@ -20,14 +22,27 @@ const Home = () => {
   const [showPerPage, setShowPerPage] = useState(3);
   const [pagination, setPagination] = useState({ start: 0, end: showPerPage });
   const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [productCount, setProductCount] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(
+    selectedProduct ? selectedProduct.price * productCount : 0
+  );
+  const [cartQuantity, setCartQuantity] = useState(0);
 
   const onPaginationChange = (start, end) => {
     setPagination({ start: start, end: end });
   };
 
   useEffect(() => {
+    if (selectedProduct) {
+      const updatedTotalPrice = selectedProduct.price * productCount;
+      setTotalPrice(updatedTotalPrice);
+    }
+  }, [selectedProduct, productCount]);
+
+  useEffect(() => {
     document.title = "Electronics-Store Home";
-    fetechElectronicProducts();
+    fetchElectronicProducts();
     if (localStorage.getItem("AccessToken") === null) {
       setLogin(false);
     } else {
@@ -35,11 +50,14 @@ const Home = () => {
     }
   }, []);
 
-  const fetechElectronicProducts = () => {
+  const fetchElectronicProducts = () => {
     axios
       .get("https://fakestoreapi.com/products/category/electronics")
       .then((response) => {
         setElectronics(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching electronic products:", error);
       });
   };
 
@@ -50,12 +68,12 @@ const Home = () => {
 
   const formattedDate = `${year}-${month}-${day}`;
 
-  const addToCart = (id) => {
+  const addToCart = (id, quantity) => {
     if (login) {
       let cartData = {
         userId: 1,
         date: formattedDate,
-        products: [{ productId: id, quantity: 1 }],
+        products: [{ productId: id, quantity }],
       };
       const body = JSON.stringify(cartData);
       axios
@@ -67,6 +85,7 @@ const Home = () => {
         .then((res) => {
           if (res.status === 200) {
             toast.success("Item Added Successfully");
+            setCartQuantity(cartQuantity + quantity);
           } else {
             toast.error("Something went wrong");
           }
@@ -93,9 +112,22 @@ const Home = () => {
     }
   };
 
+  const fetchProductDetails = (productId) => {
+    setProductCount(1);
+    setSelectedProduct(null);
+    axios
+      .get(`https://fakestoreapi.com/products/${productId}`)
+      .then((response) => {
+        setSelectedProduct(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching product details:", error);
+      });
+  };
+
   return (
     <div>
-      <Header></Header>
+      <Header />
       <div className="searchSortBar">
         <text className="bookText">Electronics</text>
         <input
@@ -109,81 +141,80 @@ const Home = () => {
         />
         <select className="selectBar" onChange={sorting}>
           <option>Sort by Relevance</option>
-          <option value="Asc">Price: Low to High</option>
-          <option value="Dsc">Price: High to Low</option>
+          <option value="Asc">Asc</option>
+          <option value="Dsc">Dsc</option>
         </select>
       </div>
       <div className="containerbody">
         <div className="container">
           <div className="cardcontainer">
-            {electronics.length > 0
-              ? electronics
-                  .filter((electronics) => {
-                    if (search === "") {
-                      return electronics;
-                    } else if (
-                      electronics.title.toLowerCase().includes(search) ||
-                      electronics.description.toLowerCase().includes(search)
-                    ) {
-                      return electronics;
-                    }
-                  })
-                  .slice(pagination.start, pagination.end)
-                  .map((electronics) => {
-                    return (
-                     
-                 
-                      <Card key={electronics.id} className="card" sx={{ maxWidth: 200 }}>
-                        <Link to={`/product/${electronics.id}`} className="product-link">
-                          {/* Wrap the CardMedia component in a Link */}
-                          <CardMedia
-                            component="img"
-                            height="140"
-                            image={electronics.image}
-                            alt="Image Not Available"
-                            sx={{ objectFit: "contain" }}
-                          />
-                        </Link>
-
-                          {electronics.rating.count === 0 && (
-                            <h1 className="content">Out of Stock</h1>
-                          )}
-
-                          <CardContent class="cardcontent">
-                            <label className="cardtitle">
-                              {electronics.title}
-                            </label>
-                            <br />
-
-                            <label className="authorname">
-                              by {electronics.description}
-                            </label>
-                            <br />
-
-                            <label className="cardtitle">
-                              Rs. {electronics.price}
-                            </label>
-                          </CardContent>
-
-                          <CardActions>
-                            <Button
-                              startIcon={<ShoppingCartRounded />}
-                              disabled={electronics.rating.count === 0}
-                              onClick={() => addToCart(electronics.id)}
-                              size="small"
-                              variant="contained"
-                            >
-                              Add To Cart
-                            </Button>
-                            <Button variant="outlined" size="small">
-                              WishList
-                            </Button>
-                          </CardActions>
-                        </Card>
+            {electronics.length > 0 ? (
+              electronics
+                .filter((electronics) => {
+                  if (search === "") {
+                    return electronics;
+                  } else if (
+                    electronics.title.toLowerCase().includes(search) ||
+                    electronics.description.toLowerCase().includes(search)
+                  ) {
+                    return electronics;
+                  }
+                })
+                .slice(pagination.start, pagination.end)
+                .map((electronics) => {
+                  return (
                     
-                    );
-                  })
-              : "No Electronics products Available Here"}
+                    <Card
+                      key={electronics.id}
+                      className="card"
+                      sx={{ maxWidth: 200 }}
+                    >
+                      <div onClick={() => fetchProductDetails(electronics.id)}>
+                      <Link to={`/product/${electronics.id}`} className="product-link">
+
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={electronics.image}
+                          alt="Image Not Available"
+                          sx={{ objectFit: "contain" }}
+                        /></Link>
+
+                      </div>
+                      {electronics.rating.count === 0 && (
+                        <h1 className="content">Out of Stock</h1>
+                      )}
+                      <CardContent className="cardcontent">
+                        <label className="cardtitle">{electronics.title}</label>
+                        <br />
+                        <label className="authorname">
+                          by {electronics.description}
+                        </label>
+                        <br />
+                        <label className="cardtitle">
+                          Rs. {electronics.price}
+                        </label>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          startIcon={<ShoppingCartRounded />}
+                          disabled={electronics.rating.count === 0}
+                          onClick={() => addToCart(electronics.id, 1)}
+                          size="small"
+                          variant="contained"
+                        >
+                          Add To Cart
+                        </Button>
+                        <Button variant="outlined" size="small">
+                          WishList
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  );
+                })
+            ) : (
+              <p>No Electronics products Available Here</p>
+            )}
           </div>
           <div className="pagination">
             <Pagination
@@ -195,6 +226,7 @@ const Home = () => {
         </div>
       </div>
       <ToastContainer autoClose={2000} />
+
     </div>
   );
 };

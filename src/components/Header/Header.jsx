@@ -15,7 +15,7 @@ const Header = (props) => {
       navigate("/");
     }, 2000);
   };
-
+    
   return (
     <div>
       <header>

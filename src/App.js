@@ -8,6 +8,7 @@ import Cart from './pages/Cart/Cart';
 import AllOrder from './pages/AllOrdersList/AllOrder';
 import Product from './components/HomePage/Product';
 
+
 function App() {
   return (
     <Router>
@@ -16,7 +17,7 @@ function App() {
         <Route path="/Login" element = { <LoginPage/>} />
         <Route path="/Signup" element = { <SignUpPage/>} />
         <Route path="/Cart" element = { <Cart/>} />
-        <Route path="/product/:productId" component={Product} />
+        <Route path="/product/:productId" element = { <Product/>} />
       </Routes>
     </Router>
   );

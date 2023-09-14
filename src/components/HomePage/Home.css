@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  margin-top: 30px; /* Add top margin to create space between header and search box */
+  margin-top: 30px; 
 }
 
 .bookText {
@@ -117,3 +117,101 @@ button:hover {
   border-color: #4caf50;
   box-shadow: 0 0 5px rgba(76, 175, 80, 0.6);
 }
+
+
+.selected-product-details {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.selected-product-details h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.selected-product-details img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.product-count {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.product-count button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.product-count input {
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.product-count p {
+  margin-left: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.product-count {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.product-count button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  margin: 0 5px;
+}
+
+.product-count button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.product-count input {
+  width: 40px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.product-count p {
+  margin-left: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+
+.zoom-image {
+  transition: transform 0.2s; 
+}
+
+.zoom-image:hover {
+  transform: scale(1.1); 
+}
+
+
+
+
